@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  --font-mono: var(--font-geist-mono);
+
+  /* Palet Statis Brand Gojek */
+  --color-primary: #00AA13;
+  --color-secondary: #4ADE80;
+  --color-tertiary: #E2E8F0;
+  --color-quaternary: #94A3B8;
+
+  /* Palet Dinamis (Theme Aware) */
+  --color-theme-base: var(--bg-base);
+  --color-theme-card: var(--bg-card);
+  --color-theme-main: var(--text-main);
+  --color-theme-muted: var(--text-muted);
+  --color-theme-border: var(--border-color);
+
+  --color-success: var(--success-text);
+  --color-success-bg: var(--success-bg);
+  --color-error: var(--error-text);
+  --color-error-bg: var(--error-bg);
+}
+
+:root, html {
+  --bg-base: #F9FAFB;
+  --bg-card: #FFFFFF;
+  --text-main: #111827;
+  --text-muted: #6B7280;
+  --border-color: #E5E7EB;
+  --success-bg: #DCFCE7;
+  --success-text: #15803D;
+  --error-bg: #FEE2E2;
+  --error-text: #B91C1C;
+}
+
+html.dark {
+  --bg-base: #0F172A;
+  --bg-card: #1E293B;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --border-color: #334155;
+  --success-bg: #064E3B;
+  --success-text: #34D399;
+  --error-bg: #7F1D1D;
+  --error-text: #F87171;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease; 
+}

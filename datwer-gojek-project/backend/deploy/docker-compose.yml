@@ -1,0 +1,24 @@
+# deploy/docker-compose.yml
+
+version: '3.8'
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: gojek_clickhouse_dw
+    ports:
+      - "8123:8123"  # HTTP port (digunakan oleh Python clickhouse-connect)
+      - "9000:9000"  # Native port
+    volumes:
+      # 👇 INI ADALAH KUNCI UTAMA NON-VOLATILE 👇
+      - clickhouse_data:/var/lib/clickhouse  
+      - clickhouse_log:/var/log/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+volumes:
+  # Mendeklarasikan named volumes agar Docker menyimpan data di disk fisik host
+  clickhouse_data:
+  clickhouse_log:

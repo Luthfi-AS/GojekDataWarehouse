@@ -1,0 +1,34 @@
+# ==========================================
+# 1. API & SERVER (FastAPI)
+# ==========================================
+fastapi>=0.103.0
+uvicorn[standard]>=0.23.0
+pydantic>=2.3.0
+pydantic-settings>=2.0.0
+
+# ==========================================
+# 2. DATA PIPELINE ENGINE (ETL)
+# ==========================================
+pandas>=2.1.0
+numpy>=1.26.0
+
+# ==========================================
+# 3. DATABASE ADAPTERS & ORM
+# ==========================================
+# Untuk koneksi ke PostgreSQL (Supabase)
+SQLAlchemy>=2.0.20
+psycopg2-binary>=2.9.9
+
+# Untuk koneksi ke ClickHouse
+clickhouse-connect>=0.6.15
+
+# ==========================================
+# 4. ENVIRONMENT & UTILITIES
+# ==========================================
+python-dotenv>=1.0.0
+
+# ==========================================
+# 5. TESTING & QUALITY ASSURANCE
+# ==========================================
+pytest>=7.4.2
+httpx>=0.25.0  # Dibutuhkan oleh FastAPI TestClient
