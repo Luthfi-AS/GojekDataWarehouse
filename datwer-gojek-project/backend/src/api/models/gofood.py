@@ -35,3 +35,19 @@ class GoFoodDashboardResponse(BaseModel):
     revenue_vs_promo: List[RevenueVsPromo]
     category_split: List[CategorySplit]
     top_merchants: List[TopMerchant]
+
+# --- Filter Options Models ---
+class DateRangeOption(BaseModel):
+    label: str
+    days: int
+
+class PromoRange(BaseModel):
+    min: float
+    max: float
+
+class FilterOptionsResponse(BaseModel):
+    date_ranges: List[DateRangeOption]
+    cities: List[str]
+    merchants: List[str]
+    categories: List[str]
+    promo_range: PromoRange

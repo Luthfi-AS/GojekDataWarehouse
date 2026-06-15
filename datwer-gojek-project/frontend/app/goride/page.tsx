@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { CheckCircle2, Route, Star, Banknote } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2, Route, Star, Banknote, Car } from "lucide-react";
 
 // Import Komponen Reusable
 import PageHeader from "@/components/layout/PageHeader";
@@ -11,7 +11,7 @@ import DonutChart from "@/components/dashboard/DonutChart";
 import ProgressBarList from "@/components/dashboard/ProgressBarList";
 
 // Import Custom Hook TanStack Query
-import { useGoRideSummary } from "@/hooks/queries/useGoRide";
+import { useGoRideSummary, useGoRideFilters } from "@/hooks/queries/useGoRide";
 
 // Formatters
 const formatCompact = (num: number) =>
@@ -21,8 +21,26 @@ const formatCompact = (num: number) =>
   }).format(num);
 
 export default function GoRideDashboard() {
-  // Mengambil data dari Backend menggunakan TanStack Query
-  const { data, isLoading, isError } = useGoRideSummary();
+  // State 5 filter: rentang hari, kota, jenis kendaraan, rentang rating & surge
+  const [days, setDays] = useState(30);
+  const [city, setCity] = useState("");
+  const [vehicle, setVehicle] = useState("");
+  const [ratingMin, setRatingMin] = useState<number | null>(null);
+  const [ratingMax, setRatingMax] = useState<number | null>(null);
+  const [surgeMin, setSurgeMin] = useState<number | null>(null);
+  const [surgeMax, setSurgeMax] = useState<number | null>(null);
+
+  // Mengambil data dari Backend menggunakan TanStack Query (re-fetch saat filter berubah)
+  const { data, isLoading, isError } = useGoRideSummary({
+    days,
+    city,
+    vehicle,
+    ratingMin,
+    ratingMax,
+    surgeMin,
+    surgeMax,
+  });
+  const { data: filterOptions } = useGoRideFilters();
 
   // Handle Loading State
   if (isLoading) {
@@ -60,6 +78,47 @@ export default function GoRideDashboard() {
       <PageHeader
         title="GoRide Operations Performance"
         description="Real-time analytical overview of transportation logistics."
+        days={days}
+        onDaysChange={setDays}
+        city={city}
+        onCityChange={setCity}
+        cities={filterOptions?.cities ?? []}
+        selectFilters={[
+          {
+            key: "vehicle",
+            label: "All Vehicles",
+            value: vehicle,
+            options: filterOptions?.vehicle_types ?? [],
+            onChange: setVehicle,
+            icon: <Car className="w-4 h-4 mr-2 text-theme-muted" />,
+          },
+        ]}
+        rangeFilters={[
+          {
+            key: "rating",
+            label: "Rating",
+            min: filterOptions?.rating_range.min ?? 0,
+            max: filterOptions?.rating_range.max ?? 0,
+            valueMin: ratingMin,
+            valueMax: ratingMax,
+            onChange: (min, max) => {
+              setRatingMin(min);
+              setRatingMax(max);
+            },
+          },
+          {
+            key: "surge",
+            label: "Surge",
+            min: filterOptions?.surge_range.min ?? 0,
+            max: filterOptions?.surge_range.max ?? 0,
+            valueMin: surgeMin,
+            valueMax: surgeMax,
+            onChange: (min, max) => {
+              setSurgeMin(min);
+              setSurgeMax(max);
+            },
+          },
+        ]}
       />
 
       {/* 2. KPI SCORECARDS */}

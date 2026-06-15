@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Banknote, TrendingUp, Tag, Clock, Info } from "lucide-react";
+import { useState } from "react";
+import { Banknote, TrendingUp, Tag, Clock, Info, Store } from "lucide-react";
 
 // Import Komponen Reusable
 import PageHeader from "@/components/layout/PageHeader";
@@ -11,7 +11,7 @@ import DualLineChart from "@/components/dashboard/DualLineChart";
 import TopMerchantsTable from "@/components/dashboard/TopMerchantsTable";
 
 // Import Custom Hook
-import { useGoFoodSummary } from "@/hooks/queries/useGoFood";
+import { useGoFoodSummary, useGoFoodFilters } from "@/hooks/queries/useGoFood";
 
 // Formatters
 const formatCompact = (num: number) =>
@@ -23,8 +23,24 @@ const formatCompact = (num: number) =>
 const formatCurrency = (num: number) => `Rp ${formatCompact(num)}`;
 
 export default function GoFoodDashboard() {
-  // Fetch data asli dari Backend
-  const { data, isLoading, isError } = useGoFoodSummary();
+  // State 5 filter: rentang hari, kota, merchant, kategori, dan rentang diskon promo
+  const [days, setDays] = useState(30);
+  const [city, setCity] = useState("");
+  const [merchant, setMerchant] = useState("");
+  const [category, setCategory] = useState("");
+  const [promoMin, setPromoMin] = useState<number | null>(null);
+  const [promoMax, setPromoMax] = useState<number | null>(null);
+
+  // Fetch data asli dari Backend (re-fetch otomatis saat filter berubah)
+  const { data, isLoading, isError } = useGoFoodSummary({
+    days,
+    city,
+    merchant,
+    category,
+    promoMin,
+    promoMax,
+  });
+  const { data: filterOptions } = useGoFoodFilters();
 
   const donutColors = [
     "var(--text-main)",
@@ -73,6 +89,43 @@ export default function GoFoodDashboard() {
       <PageHeader
         title="GoFood & Merchant Operations"
         description="Real-time analytics for food delivery and merchant performance"
+        days={days}
+        onDaysChange={setDays}
+        city={city}
+        onCityChange={setCity}
+        cities={filterOptions?.cities ?? []}
+        selectFilters={[
+          {
+            key: "merchant",
+            label: "All Merchants",
+            value: merchant,
+            options: filterOptions?.merchants ?? [],
+            onChange: setMerchant,
+            icon: <Store className="w-4 h-4 mr-2 text-theme-muted" />,
+          },
+          {
+            key: "category",
+            label: "All Categories",
+            value: category,
+            options: filterOptions?.categories ?? [],
+            onChange: setCategory,
+            icon: <Tag className="w-4 h-4 mr-2 text-theme-muted" />,
+          },
+        ]}
+        rangeFilters={[
+          {
+            key: "promo",
+            label: "Promo",
+            min: filterOptions?.promo_range.min ?? 0,
+            max: filterOptions?.promo_range.max ?? 0,
+            valueMin: promoMin,
+            valueMax: promoMax,
+            onChange: (min, max) => {
+              setPromoMin(min);
+              setPromoMax(max);
+            },
+          },
+        ]}
       />
 
       {/* 2. KPI SCORECARDS */}

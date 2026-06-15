@@ -32,3 +32,19 @@ class GoRideDashboardResponse(BaseModel):
     daily_trend: List[DailyTrend]
     vehicle_split: List[VehicleSplit]
     city_performance: List[CityPerformance]
+
+# --- Filter Options Models ---
+class DateRangeOption(BaseModel):
+    label: str
+    days: int
+
+class NumericRange(BaseModel):
+    min: float
+    max: float
+
+class FilterOptionsResponse(BaseModel):
+    date_ranges: List[DateRangeOption]
+    cities: List[str]
+    vehicle_types: List[str]
+    rating_range: NumericRange
+    surge_range: NumericRange

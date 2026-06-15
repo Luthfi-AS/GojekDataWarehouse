@@ -40,6 +40,14 @@ export interface GoRideDashboardResponse {
   city_performance: CityPerformance[];
 }
 
+export interface GoRideFilterOptions {
+  date_ranges: DateRangeOption[];
+  cities: string[];
+  vehicle_types: string[];
+  rating_range: PromoRange;
+  surge_range: PromoRange;
+}
+
 // ==========================================
 // GO FOOD TYPES
 // ==========================================
@@ -77,6 +85,24 @@ export interface GoFoodDashboardResponse {
   top_merchants: TopMerchant[];
 }
 
+export interface DateRangeOption {
+  label: string;
+  days: number;
+}
+
+export interface PromoRange {
+  min: number;
+  max: number;
+}
+
+export interface GoFoodFilterOptions {
+  date_ranges: DateRangeOption[];
+  cities: string[];
+  merchants: string[];
+  categories: string[];
+  promo_range: PromoRange;
+}
+
 // ==========================================
 // GO PAY TYPES
 // ==========================================
@@ -110,4 +136,12 @@ export interface GoPayDashboardResponse {
   revenue_vs_burn: RevenueVsBurn[];
   transaction_type: TransactionTypeSplit[]; // <-- DIUBAH
   method_popularity: MethodPopularity[];
+}
+
+export interface GoPayFilterOptions {
+  date_ranges: DateRangeOption[];
+  payment_methods: string[];
+  transaction_statuses: string[];
+  volume_range: PromoRange;
+  cashback_range: PromoRange;
 }

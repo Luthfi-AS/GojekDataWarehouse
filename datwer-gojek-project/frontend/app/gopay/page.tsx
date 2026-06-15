@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Wallet, TrendingUp, Flame } from "lucide-react";
+import { useState } from "react";
+import { Wallet, TrendingUp, Flame, CreditCard, ListChecks } from "lucide-react";
 
 // Import Komponen Reusable
 import PageHeader from "@/components/layout/PageHeader";
@@ -10,7 +10,7 @@ import DualLineChart from "@/components/dashboard/DualLineChart";
 import DonutChart from "@/components/dashboard/DonutChart";
 
 // Import Custom Hook TanStack Query
-import { useGoPaySummary } from "@/hooks/queries/useGoPay";
+import { useGoPaySummary, useGoPayFilters } from "@/hooks/queries/useGoPay";
 
 // Formatters
 const formatCompact = (num: number) =>
@@ -22,8 +22,27 @@ const formatCompact = (num: number) =>
 const formatCurrency = (num: number) => `Rp ${formatCompact(num)}`;
 
 export default function GoPayDashboard() {
-  // Mengambil data dinamis dari backend
-  const { data, isLoading, isError } = useGoPaySummary();
+  // State 5 filter: rentang hari, metode pembayaran, status transaksi,
+  // rentang volume transaksi, dan rentang cashback dibakar (GoPay tanpa dimensi kota)
+  const [days, setDays] = useState(30);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [status, setStatus] = useState("");
+  const [volumeMin, setVolumeMin] = useState<number | null>(null);
+  const [volumeMax, setVolumeMax] = useState<number | null>(null);
+  const [cashbackMin, setCashbackMin] = useState<number | null>(null);
+  const [cashbackMax, setCashbackMax] = useState<number | null>(null);
+
+  // Mengambil data dinamis dari backend (re-fetch saat filter berubah)
+  const { data, isLoading, isError } = useGoPaySummary({
+    days,
+    paymentMethod,
+    status,
+    volumeMin,
+    volumeMax,
+    cashbackMin,
+    cashbackMax,
+  });
+  const { data: filterOptions } = useGoPayFilters();
 
   // Palet warna khusus GoPay
   const gopayBlue = "#00AED6";
@@ -79,6 +98,52 @@ export default function GoPayDashboard() {
       <PageHeader
         title="GoPay Financial Ledger"
         description="Real-time financial reconciliation and transaction oversight."
+        days={days}
+        onDaysChange={setDays}
+        selectFilters={[
+          {
+            key: "paymentMethod",
+            label: "All Methods",
+            value: paymentMethod,
+            options: filterOptions?.payment_methods ?? [],
+            onChange: setPaymentMethod,
+            icon: <CreditCard className="w-4 h-4 mr-2 text-theme-muted" />,
+          },
+          {
+            key: "status",
+            label: "All Statuses",
+            value: status,
+            options: filterOptions?.transaction_statuses ?? [],
+            onChange: setStatus,
+            icon: <ListChecks className="w-4 h-4 mr-2 text-theme-muted" />,
+          },
+        ]}
+        rangeFilters={[
+          {
+            key: "volume",
+            label: "Volume",
+            min: filterOptions?.volume_range.min ?? 0,
+            max: filterOptions?.volume_range.max ?? 0,
+            valueMin: volumeMin,
+            valueMax: volumeMax,
+            onChange: (min, max) => {
+              setVolumeMin(min);
+              setVolumeMax(max);
+            },
+          },
+          {
+            key: "cashback",
+            label: "Cashback",
+            min: filterOptions?.cashback_range.min ?? 0,
+            max: filterOptions?.cashback_range.max ?? 0,
+            valueMin: cashbackMin,
+            valueMax: cashbackMax,
+            onChange: (min, max) => {
+              setCashbackMin(min);
+              setCashbackMax(max);
+            },
+          },
+        ]}
       />
 
       {/* 2. KPI SCORECARDS (3 Kolom) */}
