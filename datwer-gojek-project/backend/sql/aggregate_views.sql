@@ -90,7 +90,7 @@ CREATE TABLE olap_gopay_finance_daily (
 ) ENGINE = SummingMergeTree()
 ORDER BY (tanggal, status_transaksi, metode_pembayaran);
 
--- 2. Materialized View (Pipa Otomatis)
+
 CREATE MATERIALIZED VIEW mv_gopay_finance_daily 
 TO olap_gopay_finance_daily
 AS
