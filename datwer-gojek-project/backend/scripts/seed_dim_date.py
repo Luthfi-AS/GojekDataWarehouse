@@ -1,5 +1,5 @@
 import pandas as pd
-from src.shared.database import DatabaseManager
+from src.shared.database import get_clickhouse_client
 
 def generate_dim_date(start_date='2020-01-01', end_date='2030-12-31'):
     print(f"Generating dim_date dari {start_date} hingga {end_date}...")
@@ -24,7 +24,7 @@ def generate_dim_date(start_date='2020-01-01', end_date='2030-12-31'):
     df_dates['tanggal'] = df_dates['tanggal'].dt.date
     
     # Insert ke ClickHouse
-    client = DatabaseManager.get_clickhouse_client()
+    client = get_clickhouse_client()
     
     print("Inserting ke ClickHouse...")
     client.insert_df('dim_date', df_dates)

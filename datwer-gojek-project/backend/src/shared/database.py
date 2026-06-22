@@ -45,7 +45,9 @@ def get_clickhouse_client() -> Client:
                 host=os.getenv("CLICKHOUSE_HOST", "localhost"),
                 port=int(os.getenv("CLICKHOUSE_PORT", 8123)),
                 username=os.getenv("CLICKHOUSE_USER", "default"),
-                password=os.getenv("CLICKHOUSE_PASSWORD", "")
+                password=os.getenv("CLICKHOUSE_PASSWORD", ""),
+                # ClickHouse Cloud wajib TLS (port 8443). Default true; set false utk lokal.
+                secure=os.getenv("CLICKHOUSE_SECURE", "true").lower() == "true"
             )
             logging.info("ClickHouse client berhasil diinisialisasi.")
         except Exception as e:

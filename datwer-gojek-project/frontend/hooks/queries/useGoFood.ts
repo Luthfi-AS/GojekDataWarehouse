@@ -35,7 +35,6 @@ export const useGoFoodSummary = (filters: GoFoodFilters) => {
   });
 };
 
-// Mengambil seluruh opsi filter (kota, merchant, kategori, rentang promo) sekaligus
 export const useGoFoodFilters = () => {
   return useQuery<GoFoodFilterOptions>({
     queryKey: ["gofood-filters"],

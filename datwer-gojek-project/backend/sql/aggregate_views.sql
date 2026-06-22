@@ -37,7 +37,7 @@ CREATE TABLE olap_goride_ops_daily (
     tanggal Date,
     kota_jemputan String,
     jenis_kendaraan String,
-    total_perjalanan UInt32,         -- Hanya menghitung trip dengan status 'Sukses'
+    total_perjalanan UInt64,         -- Hanya menghitung trip dengan status 'Sukses' (selaras dgn count() di MV)
     total_jarak_km Float64,
     total_biaya_tambahan Float64,
     total_rating_driver UInt64       -- Menggantikan AVG menjadi akumulasi SUM untuk akurasi data
@@ -75,9 +75,9 @@ WHERE
 GROUP BY
     tanggal,
     kota_jemputan,
-    jenis_kendaraan
+    jenis_kendaraan;
 
-    
+
 -- 1. Tabel Penampung (Target)
 CREATE TABLE olap_gopay_finance_daily (
     tanggal Date,
